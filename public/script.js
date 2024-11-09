@@ -10,6 +10,7 @@ document.getElementById('video-form').addEventListener('submit', async (e) => {
     });
     if (response.ok) {
         const videoData = await response.json();
+        console.log('Video Data:', videoData); // Debugging log
         displayVideoData(videoData);
     } else {
         console.error('Failed to fetch video data');
@@ -17,11 +18,13 @@ document.getElementById('video-form').addEventListener('submit', async (e) => {
 });
 
 function displayVideoData(data) {
+    console.log('Displaying Video Data:', data); // Debugging log
     document.getElementById('thumbnail').src = data.thumbnail;
     document.getElementById('title').textContent = data.title;
-    document.getElementById('accountName').textContent = `By: ${data.accountName}`;
+    document.getElementById('accountName').textContent = data.accountName;
     document.getElementById('views').textContent = `Views: ${data.views}`;
     document.getElementById('date').textContent = `Date: ${new Date(data.date).toLocaleDateString()}`;
+    document.getElementById('channelIcon').src = data.channelIcon;
 
     // Remove the hidden class to display the card and export button
     document.getElementById('video-card').classList.remove('hidden');

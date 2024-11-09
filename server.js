@@ -14,17 +14,23 @@ app.post('/fetch-video-data', async (req, res) => {
     const videoUrl = req.body.url;
     const videoId = videoUrl.split('v=')[1];
     const apiKey = process.env.YOUTUBE_API_KEY;
-    const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=snippet,statistics`;
+    const videoApiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=snippet,statistics`;
+    const channelApiUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=`;
 
     try {
-        const response = await axios.get(apiUrl);
-        const videoData = response.data.items[0];
+        const videoResponse = await axios.get(videoApiUrl);
+        const videoData = videoResponse.data.items[0];
+        const channelId = videoData.snippet.channelId;
+        const channelResponse = await axios.get(`${channelApiUrl}${channelId}&key=${apiKey}`);
+        const channelData = channelResponse.data.items[0];
+
         const videoInfo = {
             thumbnail: videoData.snippet.thumbnails.high.url,
             title: videoData.snippet.title,
             accountName: videoData.snippet.channelTitle,
             views: videoData.statistics.viewCount,
             date: videoData.snippet.publishedAt,
+            channelIcon: channelData.snippet.thumbnails.default.url,
         };
         res.json(videoInfo);
     } catch (error) {
